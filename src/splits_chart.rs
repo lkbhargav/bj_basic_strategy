@@ -1,4 +1,4 @@
-use crate::Rules;
+use crate::types::Rules;
 
 pub fn should_i_split(
     cards_in_hand: &Vec<u8>,

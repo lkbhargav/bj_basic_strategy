@@ -1,6 +1,9 @@
 // use std::collections::HashSet;
 
-use crate::{compute_hand, Decision, GameType, Rules};
+use crate::{
+    compute_hand,
+    types::{Decision, GameType, Rules},
+};
 
 pub fn soft_totals_chart(
     cards_in_hand: &Vec<u8>,

@@ -1,4 +1,4 @@
-use crate::{GameType, Rules};
+use crate::types::{GameType, Rules};
 
 pub fn should_i_surrender(
     cards_in_hand: &Vec<u8>,

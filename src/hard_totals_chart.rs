@@ -1,4 +1,7 @@
-use crate::{compute_hand, Decision, GameType, Rules};
+use crate::{
+    compute_hand,
+    types::{Decision, GameType, Rules},
+};
 
 pub fn hard_totals_chart(
     cards_in_hand: &Vec<u8>,
@@ -69,7 +72,7 @@ pub fn hard_totals_chart(
 
     if total == 11 {
         match rules.game_type {
-            crate::GameType::Stand17 if true_count < 1 && dealer_up_card == 11 => {
+            GameType::Stand17 if true_count < 1 && dealer_up_card == 11 => {
                 return Some(Decision::Hit)
             }
             _ => (),
