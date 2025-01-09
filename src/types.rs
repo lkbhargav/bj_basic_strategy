@@ -110,7 +110,7 @@ pub struct Rules {
     pub max_splits_allowed: u8,
     pub deck_pen: DeckPen,
     pub number_of_hands: u8,
-    // pub number_of_players_simulated: u8,
+    pub enable_deviations: bool,
 }
 
 impl Default for Rules {
@@ -126,8 +126,29 @@ impl Default for Rules {
             max_splits_allowed: 3,
             deck_pen: DeckPen::default(),
             number_of_hands: 1,
-            // number_of_players_simulated: 4,
+            enable_deviations: false,
         }
+    }
+}
+
+impl Rules {
+    pub fn enable_deviations(mut self, enable_deviations: bool) -> Self {
+        self.enable_deviations = enable_deviations;
+        self
+    }
+
+    pub fn encore_boston_playable() -> Self {
+        let mut rules = Rules::default();
+
+        rules.game_type = GameType::Hit17;
+        rules.split_aces = SplitAces::SplitAcesOnce;
+        rules.decks = 8;
+        rules.blackjack_payout = BlackjackPayout::ThreeToTwo;
+        rules.deck_pen = DeckPen::Two;
+        rules.number_of_hands = 2;
+        rules.enable_deviations = true;
+
+        rules
     }
 }
 

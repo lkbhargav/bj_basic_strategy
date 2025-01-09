@@ -32,26 +32,28 @@ pub fn soft_totals_chart(
     // A8
     if total == 19 {
         if cards_in_hand.len() == 2 {
-            match rules.game_type {
-                GameType::Hit17 if running_count < 0 && dealer_up_card == 6 => {
-                    return Some(Decision::Stand)
-                }
-                GameType::Stand17 => {
-                    if dealer_up_card == 6 && rules.is_double_allowed.any() {
-                        if true_count >= 1 {
-                            return Some(Decision::Double);
-                        }
-
-                        return Some(Decision::Stand);
+            if rules.enable_deviations {
+                match rules.game_type {
+                    GameType::Hit17 if running_count < 0 && dealer_up_card == 6 => {
+                        return Some(Decision::Stand)
                     }
-                }
+                    GameType::Stand17 => {
+                        if dealer_up_card == 6 && rules.is_double_allowed.any() {
+                            if true_count >= 1 {
+                                return Some(Decision::Double);
+                            }
 
-                _ => (),
-            };
+                            return Some(Decision::Stand);
+                        }
+                    }
+
+                    _ => (),
+                };
+            }
 
             if (dealer_up_card == 6
-                || (true_count >= 3 && dealer_up_card == 4)
-                || (true_count >= 1 && dealer_up_card == 5))
+                || (true_count >= 3 && dealer_up_card == 4 && rules.enable_deviations)
+                || (true_count >= 1 && dealer_up_card == 5 && rules.enable_deviations))
                 && rules.is_double_allowed.any()
             {
                 return Some(Decision::Double);
@@ -80,7 +82,7 @@ pub fn soft_totals_chart(
     if total == 17 {
         if rules.is_double_allowed.any()
             && ((dealer_up_card >= 3 && dealer_up_card <= 6)
-                || (dealer_up_card == 2 && true_count >= 1))
+                || (dealer_up_card == 2 && true_count >= 1 && rules.enable_deviations))
             && cards_in_hand.len() == 2
         {
             return Some(Decision::Double);
@@ -325,7 +327,7 @@ mod tests {
 
     #[test]
     fn soft_totals_a6_deviation() {
-        let rules = Rules::default();
+        let rules = Rules::default().enable_deviations(true);
 
         // without deviation
         assert_eq!(
@@ -341,7 +343,7 @@ mod tests {
 
     #[test]
     fn soft_totals_a8_v_6_deviation() {
-        let mut rules = Rules::default();
+        let mut rules = Rules::default().enable_deviations(true);
 
         // without deviation
         assert_eq!(
@@ -369,7 +371,7 @@ mod tests {
 
     #[test]
     fn soft_totals_a8_v_5_deviation() {
-        let rules = Rules::default();
+        let rules = Rules::default().enable_deviations(true);
 
         // before
         assert_eq!(
@@ -385,7 +387,7 @@ mod tests {
 
     #[test]
     fn soft_totals_a8_v_4_deviation() {
-        let rules = Rules::default();
+        let rules = Rules::default().enable_deviations(true);
 
         // before
         assert_eq!(
