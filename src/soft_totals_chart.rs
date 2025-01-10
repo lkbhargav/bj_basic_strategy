@@ -452,4 +452,61 @@ mod tests {
 
         assert_eq!(soft_totals_chart(&vec![5, 5], 4, -9, -2, &rules), None);
     }
+
+    #[test]
+    fn soft_totals_custom_1() {
+        let rules = Rules::default();
+
+        assert_eq!(
+            soft_totals_chart(&vec![11, 2, 3], 4, -9, -2, &rules),
+            Some(Decision::Hit)
+        );
+
+        assert_eq!(
+            soft_totals_chart(&vec![11, 5], 4, -9, -2, &rules),
+            Some(Decision::Double)
+        );
+    }
+
+    #[test]
+    fn soft_totals_custom_2() {
+        let rules = Rules::default();
+
+        assert_eq!(
+            soft_totals_chart(&vec![11, 7], 2, -9, -2, &rules),
+            Some(Decision::Double)
+        );
+
+        assert_eq!(
+            soft_totals_chart(&vec![11, 5, 2], 10, -9, -2, &rules),
+            Some(Decision::Hit)
+        );
+    }
+
+    #[test]
+    fn soft_totals_custom_3() {
+        let mut rules = Rules::default();
+
+        assert_eq!(
+            soft_totals_chart(&vec![11, 8], 6, -9, -2, &rules),
+            Some(Decision::Double)
+        );
+
+        assert_eq!(
+            soft_totals_chart(&vec![11, 5, 3], 6, -9, -2, &rules),
+            Some(Decision::Stand)
+        );
+
+        rules = rules.enable_deviations(true);
+
+        assert_eq!(
+            soft_totals_chart(&vec![11, 8], 6, -1, 0, &rules),
+            Some(Decision::Stand)
+        );
+
+        assert_eq!(
+            soft_totals_chart(&vec![11, 8], 5, 6, 1, &rules),
+            Some(Decision::Double)
+        );
+    }
 }
