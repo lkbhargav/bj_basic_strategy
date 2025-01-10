@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 #[derive(Clone, Debug, Default, PartialEq)]
 pub enum GameType {
     #[default]
@@ -152,10 +154,11 @@ impl Rules {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum Decision {
     Stand,
     Hit,
+    Split,
     Double,
     Surrender,
     GotBJ,
