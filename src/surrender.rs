@@ -44,6 +44,12 @@ pub fn should_i_surrender(
                 }
             }
 
+            if (dealer_up_card == 9 || dealer_up_card == 10) && !rules.enable_deviations {
+                if cards_in_hand[0] == cards_in_hand[1] {
+                    return false;
+                }
+            }
+
             return true;
         }
 
@@ -276,5 +282,24 @@ mod tests {
         assert!(!should_i_surrender(&vec![8, 8], 11, 10, 5, &rules));
 
         assert!(should_i_surrender(&vec![8, 8], 10, 10, 6, &rules));
+    }
+
+    #[test]
+    fn test_pair_of_8s() {
+        let mut rules = Rules::default();
+
+        assert!(!should_i_surrender(&vec![8, 8], 11, 10, 2, &rules));
+
+        assert!(!should_i_surrender(&vec![8, 8], 9, 10, 2, &rules));
+
+        assert!(!should_i_surrender(&vec![8, 8], 10, 10, 0, &rules));
+
+        assert!(!should_i_surrender(&vec![8, 8], 10, 10, 1, &rules));
+
+        rules.game_type = GameType::Stand17;
+
+        assert!(!should_i_surrender(&vec![8, 8], 11, 10, 5, &rules));
+
+        assert!(!should_i_surrender(&vec![8, 8], 10, 10, 6, &rules));
     }
 }
