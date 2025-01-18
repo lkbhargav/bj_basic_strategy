@@ -73,6 +73,27 @@ impl IsDoubleAllowed {
 }
 
 #[derive(Clone, Debug, Default)]
+pub enum PlayVariation {
+    #[default]
+    PlayEverything,
+    AvoidPlayingNegativeTrueCounts,
+    PlayAboveNegativeTrueTwo,
+    PlayOnlyPositiveTrueCounts,
+}
+
+impl PlayVariation {
+    pub fn play(&self, true_count: i32) -> bool {
+        match self {
+            PlayVariation::PlayEverything => true,
+            PlayVariation::AvoidPlayingNegativeTrueCounts if true_count >= 0 => true,
+            PlayVariation::PlayAboveNegativeTrueTwo if true_count >= -1 => true,
+            PlayVariation::PlayOnlyPositiveTrueCounts if true_count > 0 => true,
+            _ => false,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Default)]
 pub enum DeckPen {
     Quater = 13,
     Half = 26,
@@ -113,6 +134,7 @@ pub struct Rules {
     pub deck_pen: DeckPen,
     pub number_of_hands: u8,
     pub enable_deviations: bool,
+    pub play_variation: PlayVariation,
 }
 
 impl Default for Rules {
@@ -129,6 +151,7 @@ impl Default for Rules {
             deck_pen: DeckPen::default(),
             number_of_hands: 1,
             enable_deviations: false,
+            play_variation: Default::default(),
         }
     }
 }
