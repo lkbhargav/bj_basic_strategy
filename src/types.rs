@@ -188,3 +188,5 @@ pub enum Decision {
     Surrender,
     GotBJ,
 }
+
+impl Copy for Decision {}
