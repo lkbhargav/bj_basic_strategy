@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use wasm_bindgen::prelude::wasm_bindgen;
 
 #[derive(Clone, Debug, Default, PartialEq)]
 pub enum GameType {
@@ -178,6 +179,7 @@ impl Rules {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[wasm_bindgen]
 pub enum Decision {
     Stand,
     Hit,
