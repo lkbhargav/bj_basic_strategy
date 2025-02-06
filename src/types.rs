@@ -178,9 +178,10 @@ impl Rules {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 #[wasm_bindgen]
 pub enum Decision {
+    #[default]
     Stand,
     Hit,
     Split,
