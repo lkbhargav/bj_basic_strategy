@@ -120,7 +120,7 @@ dependencies = [
 [[package]]
 name = "proc_macros"
 version = "0.1.0"
-source = "git+https://github.com/lkbhargav/proc_macros.git?rev=73a9cee168eae3d147147af90d00d663618c3c25#73a9cee168eae3d147147af90d00d663618c3c25"
+source = "git+https://github.com/lkbhargav/proc_macros.git?rev=c356edcdc2c887e6820c230c92884504e52556cb#c356edcdc2c887e6820c230c92884504e52556cb"
 dependencies = [
  "enum-derived",
  "quote",
