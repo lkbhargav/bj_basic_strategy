@@ -6,3 +6,6 @@ edition = "2021"
 [dependencies]
 serde = { version = "1.0.217", features = ["derive"] }
 wasm-bindgen = "0.2.100"
+proc_macros = { git = "https://github.com/lkbhargav/proc_macros.git", rev = "73a9cee168eae3d147147af90d00d663618c3c25" }
+syn = "2.0.98"
+rand = "0.9.0"

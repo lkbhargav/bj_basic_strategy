@@ -1,14 +1,17 @@
+use proc_macros::{Random, ValueAssigner};
+use rand::distr::{Distribution, StandardUniform};
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
 
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq, Random, ValueAssigner)]
 pub enum GameType {
     #[default]
     Hit17,
     Stand17,
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, Random, ValueAssigner)]
 pub enum SplitAces {
     No,
     #[default]
@@ -16,14 +19,14 @@ pub enum SplitAces {
     ReSplitAces,
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, Random, ValueAssigner)]
 pub enum BlackjackPayout {
     #[default]
     ThreeToTwo,
     SixToFive,
 }
 
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq, Random, ValueAssigner)]
 pub enum IsDoubleAllowed {
     No,
     NineAndTenOnly,
@@ -73,7 +76,7 @@ impl IsDoubleAllowed {
     }
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, Random, ValueAssigner)]
 pub enum PlayVariation {
     #[default]
     PlayEverything,
@@ -94,7 +97,7 @@ impl PlayVariation {
     }
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug, Default, Random, ValueAssigner)]
 pub enum DeckPen {
     Quater = 13,
     Half = 26,
@@ -178,7 +181,7 @@ impl Rules {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default, Random, ValueAssigner)]
 #[wasm_bindgen]
 pub enum Decision {
     #[default]
