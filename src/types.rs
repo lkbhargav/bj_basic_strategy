@@ -1,6 +1,5 @@
 use proc_macros::{Random, ValueAssigner};
-use rand::distr::{Distribution, StandardUniform};
-use rand::Rng;
+use rand::seq::IndexedRandom;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::wasm_bindgen;
 
