@@ -98,7 +98,6 @@ impl PlayVariation {
 
 #[derive(Clone, Debug, Default, Random, ValueAssigner)]
 pub enum DeckPen {
-    Quater = 13,
     Half = 26,
     ThreeFourth = 39,
     #[default]
@@ -112,7 +111,6 @@ pub enum DeckPen {
 impl DeckPen {
     pub fn value(&self) -> usize {
         match self {
-            DeckPen::Quater => 13,
             DeckPen::Half => 26,
             DeckPen::ThreeFourth => 39,
             DeckPen::One => 52,
