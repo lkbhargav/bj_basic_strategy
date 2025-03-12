@@ -7,6 +7,10 @@ pub fn should_i_surrender(
     true_count: isize,
     rules: &Rules,
 ) -> bool {
+    if !rules.surrender {
+        return false;
+    }
+
     let total: u8 = cards_in_hand.iter().sum();
 
     if cards_in_hand.len() > 2 || cards_in_hand.contains(&11) || (total < 14 || total > 17) {

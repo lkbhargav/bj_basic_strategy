@@ -23,6 +23,7 @@ pub enum BlackjackPayout {
     #[default]
     ThreeToTwo,
     SixToFive,
+    Even,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Random, ValueAssigner)]
@@ -135,7 +136,7 @@ pub struct Rules {
     pub is_double_allowed: IsDoubleAllowed,
     pub max_splits_allowed: u8,
     pub deck_pen: DeckPen,
-    pub number_of_hands: u8,
+    number_of_players: u8,
     pub enable_deviations: bool,
     pub play_variation: PlayVariation,
 }
@@ -152,7 +153,7 @@ impl Default for Rules {
             is_double_allowed: Default::default(),
             max_splits_allowed: 3,
             deck_pen: DeckPen::default(),
-            number_of_hands: 1,
+            number_of_players: 1,
             enable_deviations: false,
             play_variation: Default::default(),
         }
@@ -165,6 +166,11 @@ impl Rules {
         self
     }
 
+    pub fn set_number_of_players(mut self, number_of_players: u8) -> Self {
+        self.number_of_players = number_of_players;
+        self
+    }
+
     pub fn encore_boston_playable() -> Self {
         let mut rules = Rules::default();
 
@@ -173,8 +179,9 @@ impl Rules {
         rules.decks = 8;
         rules.blackjack_payout = BlackjackPayout::ThreeToTwo;
         rules.deck_pen = DeckPen::Two;
-        rules.number_of_hands = 2;
         rules.enable_deviations = true;
+
+        rules = rules.set_number_of_players(1);
 
         rules
     }
