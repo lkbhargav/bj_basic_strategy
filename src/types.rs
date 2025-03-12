@@ -166,9 +166,17 @@ impl Rules {
         self
     }
 
-    pub fn set_number_of_players(mut self, number_of_players: u8) -> Self {
-        self.number_of_players = number_of_players;
-        self
+    pub fn set_number_of_players(mut self, number_of_players: i32) -> Result<Self, String> {
+        if number_of_players < 1 || number_of_players > 5 {
+            return Err(
+                "Valid number of players can be 1 to 5, please fix the error and try again"
+                    .to_string(),
+            );
+        }
+
+        self.number_of_players = number_of_players as u8;
+
+        Ok(self)
     }
 
     pub fn encore_boston_playable() -> Self {
@@ -181,7 +189,7 @@ impl Rules {
         rules.deck_pen = DeckPen::Two;
         rules.enable_deviations = true;
 
-        rules = rules.set_number_of_players(1);
+        rules = rules.set_number_of_players(1).unwrap();
 
         rules
     }
