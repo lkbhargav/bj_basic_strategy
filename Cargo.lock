@@ -127,7 +127,7 @@ dependencies = [
 [[package]]
 name = "proc_macros"
 version = "0.1.0"
-source = "git+https://github.com/lkbhargav/proc_macros.git?rev=bfb2bb1a75262c39e692986efa40ea4399ee20de#bfb2bb1a75262c39e692986efa40ea4399ee20de"
+source = "git+https://github.com/lkbhargav/proc_macros.git?rev=127027c4bdec2b130f7c3dc58a0814c86fa564ef#127027c4bdec2b130f7c3dc58a0814c86fa564ef"
 dependencies = [
  "enum-derived",
  "getrandom 0.3.1",
