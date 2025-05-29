@@ -83,15 +83,17 @@ pub enum PlayVariation {
     AvoidPlayingNegativeTrueCounts,
     PlayAboveNegativeTrueTwo,
     PlayOnlyPositiveTrueCounts,
+    PlayAnyPositiveRunningCount,
 }
 
 impl PlayVariation {
-    pub fn play(&self, true_count: i32) -> bool {
+    pub fn play(&self, true_count: i32, running_count: i32) -> bool {
         match self {
             PlayVariation::PlayEverything => true,
             PlayVariation::AvoidPlayingNegativeTrueCounts if true_count >= 0 => true,
             PlayVariation::PlayAboveNegativeTrueTwo if true_count >= -1 => true,
             PlayVariation::PlayOnlyPositiveTrueCounts if true_count > 0 => true,
+            PlayVariation::PlayAnyPositiveRunningCount if running_count > 0 => true,
             _ => false,
         }
     }
