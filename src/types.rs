@@ -138,7 +138,7 @@ pub struct Rules {
     pub is_double_allowed: IsDoubleAllowed,
     pub max_splits_allowed: u8,
     pub deck_pen: DeckPen,
-    number_of_players: u8,
+    pub number_of_players: u8,
     pub enable_deviations: bool,
     pub play_variation: PlayVariation,
 }
