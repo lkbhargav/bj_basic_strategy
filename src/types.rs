@@ -141,6 +141,7 @@ pub struct Rules {
     pub number_of_players: u8,
     pub enable_deviations: bool,
     pub play_variation: PlayVariation,
+    pub do_other_players_play_perfect_strategy: bool,
 }
 
 impl Default for Rules {
@@ -158,6 +159,7 @@ impl Default for Rules {
             number_of_players: 1,
             enable_deviations: false,
             play_variation: Default::default(),
+            do_other_players_play_perfect_strategy: true,
         }
     }
 }
@@ -194,6 +196,120 @@ impl Rules {
         rules = rules.set_number_of_players(1).unwrap();
 
         rules
+    }
+}
+
+pub struct RulesBuilder {
+    game_type: Option<GameType>,
+    double_after_split: bool,
+    split_aces: SplitAces,
+    surrender: bool,
+    decks: u8,
+    blackjack_payout: BlackjackPayout,
+    is_double_allowed: IsDoubleAllowed,
+    max_splits_allowed: u8,
+    deck_pen: DeckPen,
+    number_of_players: u8,
+    enable_deviations: bool,
+    play_variation: PlayVariation,
+    do_other_players_play_perfect_strategy: bool,
+}
+
+impl RulesBuilder {
+    pub fn new() -> Self {
+        Self {
+            game_type: None,
+            double_after_split: false,
+            split_aces: SplitAces::default(),
+            surrender: false,
+            decks: 6,
+            blackjack_payout: BlackjackPayout::default(),
+            is_double_allowed: IsDoubleAllowed::default(),
+            max_splits_allowed: 3,
+            deck_pen: DeckPen::default(),
+            number_of_players: 1,
+            enable_deviations: false,
+            play_variation: PlayVariation::default(),
+            do_other_players_play_perfect_strategy: true,
+        }
+    }
+
+    pub fn game_type(mut self, game_type: GameType) -> Self {
+        self.game_type = Some(game_type);
+        self
+    }
+
+    pub fn double_after_split(mut self, val: bool) -> Self {
+        self.double_after_split = val;
+        self
+    }
+
+    pub fn split_aces(mut self, val: SplitAces) -> Self {
+        self.split_aces = val;
+        self
+    }
+
+    pub fn surrender(mut self, val: bool) -> Self {
+        self.surrender = val;
+        self
+    }
+
+    pub fn decks(mut self, val: u8) -> Self {
+        self.decks = val;
+        self
+    }
+
+    pub fn blackjack_payout(mut self, val: BlackjackPayout) -> Self {
+        self.blackjack_payout = val;
+        self
+    }
+
+    pub fn is_double_allowed(mut self, val: IsDoubleAllowed) -> Self {
+        self.is_double_allowed = val;
+        self
+    }
+
+    pub fn max_splits_allowed(mut self, val: u8) -> Self {
+        self.max_splits_allowed = val;
+        self
+    }
+
+    pub fn deck_pen(mut self, val: DeckPen) -> Self {
+        self.deck_pen = val;
+        self
+    }
+
+    pub fn number_of_players(mut self, val: u8) -> Self {
+        self.number_of_players = val;
+        self
+    }
+
+    pub fn enable_deviations(mut self, val: bool) -> Self {
+        self.enable_deviations = val;
+        self
+    }
+
+    pub fn play_variation(mut self, val: PlayVariation) -> Self {
+        self.play_variation = val;
+        self
+    }
+
+    pub fn build(self) -> Result<Rules, &'static str> {
+        Ok(Rules {
+            game_type: self.game_type.ok_or("game_type is required")?,
+            double_after_split: self.double_after_split,
+            split_aces: self.split_aces,
+            surrender: self.surrender,
+            decks: self.decks,
+            blackjack_payout: self.blackjack_payout,
+            is_double_allowed: self.is_double_allowed,
+            max_splits_allowed: self.max_splits_allowed,
+            deck_pen: self.deck_pen,
+            number_of_players: self.number_of_players,
+            enable_deviations: self.enable_deviations,
+            play_variation: self.play_variation,
+            do_other_players_play_perfect_strategy: self.do_other_players_play_perfect_strategy,
+        })
     }
 }
 
