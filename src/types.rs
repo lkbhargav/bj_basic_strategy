@@ -129,19 +129,19 @@ impl DeckPen {
 
 #[derive(Clone, Debug)]
 pub struct Rules {
-    pub game_type: GameType,
-    pub double_after_split: bool,
-    pub split_aces: SplitAces,
-    pub surrender: bool,
-    pub decks: u8,
-    pub blackjack_payout: BlackjackPayout,
-    pub is_double_allowed: IsDoubleAllowed,
-    pub max_splits_allowed: u8,
-    pub deck_pen: DeckPen,
-    pub number_of_players: u8,
-    pub enable_deviations: bool,
-    pub play_variation: PlayVariation,
-    pub do_other_players_play_perfect_strategy: bool,
+    game_type: GameType,
+    double_after_split: bool,
+    split_aces: SplitAces,
+    surrender: bool,
+    decks: u8,
+    blackjack_payout: BlackjackPayout,
+    is_double_allowed: IsDoubleAllowed,
+    max_splits_allowed: u8,
+    deck_pen: DeckPen,
+    number_of_other_players: u8,
+    enable_deviations: bool,
+    play_variation: PlayVariation,
+    do_other_players_play_perfect_strategy: bool,
 }
 
 impl Default for Rules {
@@ -156,46 +156,77 @@ impl Default for Rules {
             is_double_allowed: Default::default(),
             max_splits_allowed: 3,
             deck_pen: DeckPen::default(),
-            number_of_players: 1,
+            number_of_other_players: 1,
             enable_deviations: false,
             play_variation: Default::default(),
-            do_other_players_play_perfect_strategy: true,
+            do_other_players_play_perfect_strategy: false,
         }
     }
 }
 
+// getters
 impl Rules {
-    pub fn enable_deviations(mut self, enable_deviations: bool) -> Self {
-        self.enable_deviations = enable_deviations;
-        self
+    pub fn game_type(&self) -> &GameType {
+        &self.game_type
     }
 
-    pub fn set_number_of_players(mut self, number_of_players: i32) -> Result<Self, String> {
-        if number_of_players < 1 || number_of_players > 5 {
-            return Err(
-                "Valid number of players can be 1 to 5, please fix the error and try again"
-                    .to_string(),
-            );
-        }
-
-        self.number_of_players = number_of_players as u8;
-
-        Ok(self)
+    pub fn double_after_split(&self) -> bool {
+        self.double_after_split
     }
 
-    pub fn encore_boston_playable() -> Self {
-        let mut rules = Rules::default();
+    pub fn split_aces(&self) -> &SplitAces {
+        &self.split_aces
+    }
 
-        rules.game_type = GameType::Hit17;
-        rules.split_aces = SplitAces::SplitAcesOnce;
-        rules.decks = 8;
-        rules.blackjack_payout = BlackjackPayout::ThreeToTwo;
-        rules.deck_pen = DeckPen::Two;
-        rules.enable_deviations = true;
+    pub fn surrender(&self) -> bool {
+        self.surrender
+    }
 
-        rules = rules.set_number_of_players(1).unwrap();
+    pub fn decks(&self) -> u8 {
+        self.decks
+    }
 
-        rules
+    pub fn blackjack_payout(&self) -> &BlackjackPayout {
+        &self.blackjack_payout
+    }
+
+    pub fn is_double_allowed(&self) -> &IsDoubleAllowed {
+        &self.is_double_allowed
+    }
+
+    pub fn max_splits_allowed(&self) -> u8 {
+        self.max_splits_allowed
+    }
+
+    pub fn deck_pen(&self) -> &DeckPen {
+        &self.deck_pen
+    }
+
+    pub fn number_of_other_players(&self) -> u8 {
+        self.number_of_other_players
+    }
+
+    pub fn enable_deviations(&self) -> bool {
+        self.enable_deviations
+    }
+
+    pub fn play_variation(&self) -> &PlayVariation {
+        &self.play_variation
+    }
+
+    pub fn do_other_players_play_perfect_strategy(&self) -> bool {
+        self.do_other_players_play_perfect_strategy
+    }
+}
+
+// setters
+impl Rules {
+    pub fn set_enable_deviations(&mut self, value: bool) {
+        self.enable_deviations = value;
+    }
+
+    pub fn set_game_type(&mut self, game_type: GameType) {
+        self.game_type = game_type;
     }
 }
 
@@ -209,7 +240,7 @@ pub struct RulesBuilder {
     is_double_allowed: IsDoubleAllowed,
     max_splits_allowed: u8,
     deck_pen: DeckPen,
-    number_of_players: u8,
+    number_of_other_players: u8,
     enable_deviations: bool,
     play_variation: PlayVariation,
     do_other_players_play_perfect_strategy: bool,
@@ -227,10 +258,10 @@ impl RulesBuilder {
             is_double_allowed: IsDoubleAllowed::default(),
             max_splits_allowed: 3,
             deck_pen: DeckPen::default(),
-            number_of_players: 1,
+            number_of_other_players: 1,
             enable_deviations: false,
             play_variation: PlayVariation::default(),
-            do_other_players_play_perfect_strategy: true,
+            do_other_players_play_perfect_strategy: false,
         }
     }
 
@@ -254,7 +285,8 @@ impl RulesBuilder {
         self
     }
 
-    pub fn decks(mut self, val: u8) -> Self {
+    pub fn decks(mut self, mut val: u8) -> Self {
+        val = val.clamp(2, 8);
         self.decks = val;
         self
     }
@@ -269,7 +301,8 @@ impl RulesBuilder {
         self
     }
 
-    pub fn max_splits_allowed(mut self, val: u8) -> Self {
+    pub fn max_splits_allowed(mut self, mut val: u8) -> Self {
+        val = val.clamp(0, 3);
         self.max_splits_allowed = val;
         self
     }
@@ -279,8 +312,9 @@ impl RulesBuilder {
         self
     }
 
-    pub fn number_of_players(mut self, val: u8) -> Self {
-        self.number_of_players = val;
+    pub fn number_of_other_players(mut self, mut val: u8) -> Self {
+        val = val.clamp(0, 4);
+        self.number_of_other_players = val;
         self
     }
 
@@ -291,6 +325,11 @@ impl RulesBuilder {
 
     pub fn play_variation(mut self, val: PlayVariation) -> Self {
         self.play_variation = val;
+        self
+    }
+
+    pub fn do_other_players_play_perfect_strategy(mut self, value: bool) -> Self {
+        self.do_other_players_play_perfect_strategy = value;
         self
     }
 
@@ -305,7 +344,7 @@ impl RulesBuilder {
             is_double_allowed: self.is_double_allowed,
             max_splits_allowed: self.max_splits_allowed,
             deck_pen: self.deck_pen,
-            number_of_players: self.number_of_players,
+            number_of_other_players: self.number_of_other_players,
             enable_deviations: self.enable_deviations,
             play_variation: self.play_variation,
             do_other_players_play_perfect_strategy: self.do_other_players_play_perfect_strategy,

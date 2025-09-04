@@ -32,13 +32,13 @@ pub fn soft_totals_chart(
     // A8
     if total == 19 {
         if cards_in_hand.len() == 2 {
-            if rules.enable_deviations {
-                match rules.game_type {
+            if rules.enable_deviations() {
+                match rules.game_type() {
                     GameType::Hit17 if running_count < 0 && dealer_up_card == 6 => {
-                        return Some(Decision::Stand)
+                        return Some(Decision::Stand);
                     }
                     GameType::Stand17 => {
-                        if dealer_up_card == 6 && rules.is_double_allowed.any() {
+                        if dealer_up_card == 6 && rules.is_double_allowed().any() {
                             if true_count >= 1 {
                                 return Some(Decision::Double);
                             }
@@ -52,9 +52,9 @@ pub fn soft_totals_chart(
             }
 
             if (dealer_up_card == 6
-                || (true_count >= 3 && dealer_up_card == 4 && rules.enable_deviations)
-                || (true_count >= 1 && dealer_up_card == 5 && rules.enable_deviations))
-                && rules.is_double_allowed.any()
+                || (true_count >= 3 && dealer_up_card == 4 && rules.enable_deviations())
+                || (true_count >= 1 && dealer_up_card == 5 && rules.enable_deviations()))
+                && rules.is_double_allowed().any()
             {
                 return Some(Decision::Double);
             }
@@ -67,7 +67,7 @@ pub fn soft_totals_chart(
     if total == 18 {
         if dealer_up_card >= 2
             && dealer_up_card <= 6
-            && rules.is_double_allowed.any()
+            && rules.is_double_allowed().any()
             && cards_in_hand.len() == 2
         {
             return Some(Decision::Double);
@@ -80,9 +80,9 @@ pub fn soft_totals_chart(
 
     // A6
     if total == 17 {
-        if rules.is_double_allowed.any()
+        if rules.is_double_allowed().any()
             && ((dealer_up_card >= 3 && dealer_up_card <= 6)
-                || (dealer_up_card == 2 && true_count >= 1 && rules.enable_deviations))
+                || (dealer_up_card == 2 && true_count >= 1 && rules.enable_deviations()))
             && cards_in_hand.len() == 2
         {
             return Some(Decision::Double);
@@ -93,7 +93,7 @@ pub fn soft_totals_chart(
 
     // A5 and A4
     if total == 16 || total == 15 {
-        if rules.is_double_allowed.any()
+        if rules.is_double_allowed().any()
             && dealer_up_card >= 4
             && dealer_up_card <= 6
             && cards_in_hand.len() == 2
@@ -106,7 +106,7 @@ pub fn soft_totals_chart(
 
     // A3 and A2
     if total == 14 || total == 13 {
-        if rules.is_double_allowed.any()
+        if rules.is_double_allowed().any()
             && dealer_up_card >= 5
             && dealer_up_card <= 6
             && cards_in_hand.len() == 2
@@ -327,7 +327,8 @@ mod tests {
 
     #[test]
     fn soft_totals_a6_deviation() {
-        let rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         // without deviation
         assert_eq!(
@@ -343,7 +344,8 @@ mod tests {
 
     #[test]
     fn soft_totals_a8_v_6_deviation() {
-        let mut rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         // without deviation
         assert_eq!(
@@ -356,7 +358,7 @@ mod tests {
             Some(Decision::Stand)
         );
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         assert_eq!(
             soft_totals_chart(&vec![11, 8], 6, 10, 0, &rules),
@@ -371,7 +373,8 @@ mod tests {
 
     #[test]
     fn soft_totals_a8_v_5_deviation() {
-        let rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         // before
         assert_eq!(
@@ -387,7 +390,8 @@ mod tests {
 
     #[test]
     fn soft_totals_a8_v_4_deviation() {
-        let rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         // before
         assert_eq!(
@@ -497,7 +501,7 @@ mod tests {
             Some(Decision::Stand)
         );
 
-        rules = rules.enable_deviations(true);
+        rules.set_enable_deviations(true);
 
         assert_eq!(
             soft_totals_chart(&vec![11, 8], 6, -1, 0, &rules),

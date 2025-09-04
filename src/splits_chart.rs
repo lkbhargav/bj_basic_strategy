@@ -18,7 +18,7 @@ pub fn should_i_split(
     }
 
     // 10
-    if pc == 10 && rules.enable_deviations {
+    if pc == 10 && rules.enable_deviations() {
         if (true_count == 4 && dealer_up_card == 6)
             || (true_count == 5 && (dealer_up_card >= 5 && dealer_up_card <= 6))
             || (true_count >= 6 && (dealer_up_card >= 4 && dealer_up_card <= 6))
@@ -37,7 +37,7 @@ pub fn should_i_split(
 
     // 7, 2 and 3
     if (pc == 7 || pc == 2 || pc == 3) && dealer_up_card >= 2 && dealer_up_card <= 7 {
-        if !rules.double_after_split
+        if !rules.double_after_split()
             && (pc == 2 || pc == 3)
             && (dealer_up_card == 2 || dealer_up_card == 3)
         {
@@ -49,7 +49,7 @@ pub fn should_i_split(
 
     // 6
     if pc == 6 && dealer_up_card >= 2 && dealer_up_card <= 6 {
-        if !rules.double_after_split && dealer_up_card == 2 {
+        if !rules.double_after_split() && dealer_up_card == 2 {
             return false;
         }
 
@@ -58,7 +58,7 @@ pub fn should_i_split(
 
     // 4
     if pc == 4 && dealer_up_card >= 5 && dealer_up_card <= 6 {
-        if !rules.double_after_split {
+        if !rules.double_after_split() {
             return false;
         }
 
@@ -116,7 +116,8 @@ mod tests {
 
     #[test]
     fn should_i_split_10_true_count() {
-        let rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         let pc = &vec![10, 10];
 

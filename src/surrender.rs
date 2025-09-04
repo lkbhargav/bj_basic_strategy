@@ -7,7 +7,7 @@ pub fn should_i_surrender(
     true_count: isize,
     rules: &Rules,
 ) -> bool {
-    if !rules.surrender {
+    if !rules.surrender() {
         return false;
     }
 
@@ -18,9 +18,9 @@ pub fn should_i_surrender(
     }
 
     if total == 17
-        && rules.game_type == GameType::Hit17
+        && rules.game_type() == &GameType::Hit17
         && dealer_up_card == 11
-        && rules.enable_deviations
+        && rules.enable_deviations()
     {
         return true;
     }
@@ -30,15 +30,15 @@ pub fn should_i_surrender(
             if ((dealer_up_card == 10 && cards_in_hand[0] == cards_in_hand[1] && true_count < 1)
                 || (dealer_up_card == 9 && true_count <= -1)
                 || (dealer_up_card == 9 && cards_in_hand[0] == cards_in_hand[1]))
-                && rules.enable_deviations
+                && rules.enable_deviations()
             {
                 return false;
             }
 
             if dealer_up_card == 11 {
                 if cards_in_hand[0] == cards_in_hand[1] {
-                    if rules.enable_deviations {
-                        match rules.game_type {
+                    if rules.enable_deviations() {
+                        match rules.game_type() {
                             GameType::Hit17 => return true,
                             _ => (),
                         };
@@ -48,7 +48,7 @@ pub fn should_i_surrender(
                 }
             }
 
-            if (dealer_up_card == 9 || dealer_up_card == 10) && !rules.enable_deviations {
+            if (dealer_up_card == 9 || dealer_up_card == 10) && !rules.enable_deviations() {
                 if cards_in_hand[0] == cards_in_hand[1] {
                     return false;
                 }
@@ -57,7 +57,7 @@ pub fn should_i_surrender(
             return true;
         }
 
-        if dealer_up_card == 8 && true_count >= 4 && rules.enable_deviations {
+        if dealer_up_card == 8 && true_count >= 4 && rules.enable_deviations() {
             return true;
         }
     }
@@ -71,12 +71,12 @@ pub fn should_i_surrender(
             return true;
         }
 
-        if dealer_up_card == 9 && true_count >= 2 && rules.enable_deviations {
+        if dealer_up_card == 9 && true_count >= 2 && rules.enable_deviations() {
             return true;
         }
 
-        if dealer_up_card == 11 && rules.enable_deviations {
-            match rules.game_type {
+        if dealer_up_card == 11 && rules.enable_deviations() {
+            match rules.game_type() {
                 GameType::Hit17 if true_count >= -1 => return true,
                 GameType::Stand17 if true_count >= 2 => return true,
                 _ => (),
@@ -84,8 +84,8 @@ pub fn should_i_surrender(
         }
     }
 
-    if total == 14 && rules.enable_deviations {
-        match rules.game_type {
+    if total == 14 && rules.enable_deviations() {
+        match rules.game_type() {
             GameType::Hit17 => {
                 if (true_count >= 6 && dealer_up_card == 9)
                     || (true_count >= 4 && dealer_up_card == 10)
@@ -114,7 +114,9 @@ mod tests {
 
     #[test]
     fn test_surrender_15_v_10() {
-        let rules = Rules::default().enable_deviations(false);
+        let mut rules = Rules::default();
+
+        rules.set_enable_deviations(false);
 
         assert!(should_i_surrender(&vec![10, 5], 10, 0, 0, &rules));
 
@@ -124,7 +126,9 @@ mod tests {
 
     #[test]
     fn test_surrender_15_v_9() {
-        let rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+
+        rules.set_enable_deviations(true);
 
         assert!(!should_i_surrender(&vec![10, 5], 9, 10, 1, &rules));
 
@@ -134,14 +138,16 @@ mod tests {
 
     #[test]
     fn test_surrender_15_v_11() {
-        let mut rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+
+        rules.set_enable_deviations(true);
 
         assert!(!should_i_surrender(&vec![10, 5], 11, 10, -2, &rules));
 
         // deviation
         assert!(should_i_surrender(&vec![10, 5], 11, 10, -1, &rules));
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         assert!(!should_i_surrender(&vec![10, 5], 11, 10, 1, &rules));
 
@@ -150,11 +156,13 @@ mod tests {
 
     #[test]
     fn test_surrender_17_v_11() {
-        let mut rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+
+        rules.set_enable_deviations(true);
 
         assert!(should_i_surrender(&vec![10, 7], 11, 10, 0, &rules));
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         // deviation
         assert!(!should_i_surrender(&vec![10, 7], 11, 10, 5, &rules));
@@ -162,13 +170,15 @@ mod tests {
 
     #[test]
     fn test_surrender_16_v_8() {
-        let mut rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+
+        rules.set_enable_deviations(true);
 
         assert!(!should_i_surrender(&vec![10, 6], 8, 10, 3, &rules));
 
         assert!(should_i_surrender(&vec![10, 6], 8, 10, 4, &rules));
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         assert!(!should_i_surrender(&vec![10, 6], 8, 10, 3, &rules));
 
@@ -177,17 +187,19 @@ mod tests {
 
     #[test]
     fn test_surrender_16_v_9() {
-        let rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+
+        rules.set_enable_deviations(true);
 
         assert!(!should_i_surrender(&vec![10, 6], 9, 10, -1, &rules));
 
-        let mut rules = rules.enable_deviations(false);
+        rules.set_enable_deviations(false);
 
         assert!(should_i_surrender(&vec![10, 6], 9, 10, 0, &rules));
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
-        let rules = rules.enable_deviations(true);
+        rules.set_enable_deviations(true);
 
         assert!(!should_i_surrender(&vec![10, 6], 9, 10, -1, &rules));
 
@@ -202,7 +214,7 @@ mod tests {
 
         assert!(should_i_surrender(&vec![10, 6], 10, 10, 10, &rules));
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         assert!(should_i_surrender(&vec![10, 6], 10, 10, -10, &rules));
 
@@ -217,7 +229,7 @@ mod tests {
 
         assert!(should_i_surrender(&vec![10, 6], 11, 10, 10, &rules));
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         assert!(should_i_surrender(&vec![10, 6], 11, 10, -10, &rules));
 
@@ -226,13 +238,14 @@ mod tests {
 
     #[test]
     fn test_surrender_14_v_9() {
-        let mut rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         assert!(!should_i_surrender(&vec![10, 4], 9, 10, 0, &rules));
 
         assert!(should_i_surrender(&vec![10, 4], 9, 10, 6, &rules));
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         assert!(!should_i_surrender(&vec![10, 4], 9, 10, 0, &rules));
 
@@ -241,13 +254,14 @@ mod tests {
 
     #[test]
     fn test_surrender_14_v_10() {
-        let mut rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         assert!(!should_i_surrender(&vec![10, 4], 10, 10, 0, &rules));
 
         assert!(should_i_surrender(&vec![10, 4], 10, 10, 4, &rules));
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         assert!(!should_i_surrender(&vec![10, 4], 10, 10, 0, &rules));
 
@@ -256,13 +270,14 @@ mod tests {
 
     #[test]
     fn test_surrender_14_v_11() {
-        let mut rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         assert!(!should_i_surrender(&vec![10, 4], 11, 10, 0, &rules));
 
         assert!(should_i_surrender(&vec![10, 4], 11, 10, 4, &rules));
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         assert!(!should_i_surrender(&vec![10, 4], 11, 10, 0, &rules));
 
@@ -271,7 +286,8 @@ mod tests {
 
     #[test]
     fn test_pair_of_8s_deviation() {
-        let mut rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         assert!(should_i_surrender(&vec![8, 8], 11, 10, 2, &rules));
 
@@ -281,7 +297,7 @@ mod tests {
 
         assert!(should_i_surrender(&vec![8, 8], 10, 10, 1, &rules));
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         assert!(!should_i_surrender(&vec![8, 8], 11, 10, 5, &rules));
 
@@ -300,7 +316,7 @@ mod tests {
 
         assert!(!should_i_surrender(&vec![8, 8], 10, 10, 1, &rules));
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         assert!(!should_i_surrender(&vec![8, 8], 11, 10, 5, &rules));
 

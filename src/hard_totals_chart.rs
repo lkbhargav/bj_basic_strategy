@@ -29,25 +29,25 @@ pub fn hard_totals_chart(
         return Some(Decision::Stand);
     }
 
-    if total == 16 && rules.enable_deviations {
+    if total == 16 && rules.enable_deviations() {
         if (dealer_up_card == 9 && true_count >= 4)
             || (dealer_up_card == 10 && running_count > 0)
-            || (dealer_up_card == 11 && true_count >= 3 && rules.game_type == GameType::Hit17)
+            || (dealer_up_card == 11 && true_count >= 3 && rules.game_type() == &GameType::Hit17)
         {
             return Some(Decision::Stand);
         }
     }
 
-    if total == 15 && rules.enable_deviations {
+    if total == 15 && rules.enable_deviations() {
         if (dealer_up_card == 10 && true_count >= 4)
-            || (dealer_up_card == 11 && true_count >= 5 && rules.game_type == GameType::Hit17)
+            || (dealer_up_card == 11 && true_count >= 5 && rules.game_type() == &GameType::Hit17)
         {
             return Some(Decision::Stand);
         }
     }
 
     if total == 13 {
-        if dealer_up_card == 2 && true_count <= -1 && rules.enable_deviations {
+        if dealer_up_card == 2 && true_count <= -1 && rules.enable_deviations() {
             return Some(Decision::Hit);
         }
 
@@ -57,12 +57,12 @@ pub fn hard_totals_chart(
     }
 
     if total == 12 {
-        if dealer_up_card == 4 && running_count < 0 && rules.enable_deviations {
+        if dealer_up_card == 4 && running_count < 0 && rules.enable_deviations() {
             return Some(Decision::Hit);
         }
 
         if (dealer_up_card == 2 && true_count >= 3)
-            || (dealer_up_card == 3 && true_count >= 2) && rules.enable_deviations
+            || (dealer_up_card == 3 && true_count >= 2) && rules.enable_deviations()
         {
             return Some(Decision::Stand);
         }
@@ -73,10 +73,10 @@ pub fn hard_totals_chart(
     }
 
     if total == 11 {
-        if rules.enable_deviations {
-            match rules.game_type {
+        if rules.enable_deviations() {
+            match rules.game_type() {
                 GameType::Stand17 if true_count < 1 && dealer_up_card == 11 => {
-                    return Some(Decision::Hit)
+                    return Some(Decision::Hit);
                 }
                 _ => (),
             };
@@ -90,11 +90,13 @@ pub fn hard_totals_chart(
     if total == 10 {
         if ((dealer_up_card >= 2 && dealer_up_card <= 9)
             || ((dealer_up_card == 10 && true_count >= 4)
-                || (dealer_up_card == 11 && true_count >= 3 && rules.game_type == GameType::Hit17)
+                || (dealer_up_card == 11
+                    && true_count >= 3
+                    && rules.game_type() == &GameType::Hit17)
                 || (dealer_up_card == 11
                     && true_count >= 4
-                    && rules.game_type == GameType::Stand17))
-                && rules.enable_deviations)
+                    && rules.game_type() == &GameType::Stand17))
+                && rules.enable_deviations())
             && cards_in_hand.len() == 2
         {
             return Some(Decision::Double);
@@ -105,14 +107,14 @@ pub fn hard_totals_chart(
         if ((dealer_up_card >= 3 && dealer_up_card <= 6)
             || ((dealer_up_card == 2 && true_count >= 1)
                 || (dealer_up_card == 7 && true_count >= 3))
-                && rules.enable_deviations)
+                && rules.enable_deviations())
             && cards_in_hand.len() == 2
         {
             return Some(Decision::Double);
         }
     }
 
-    if total == 8 && rules.enable_deviations {
+    if total == 8 && rules.enable_deviations() {
         if ((dealer_up_card == 6 && true_count >= 2) || (dealer_up_card == 5 && true_count >= 4))
             && cards_in_hand.len() == 2
         {
@@ -331,7 +333,8 @@ mod tests {
 
     #[test]
     fn test_hard_deviations_12() {
-        let rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         assert_eq!(
             hard_totals_chart(&vec![10, 2], 4, -1, 0, &rules),
@@ -351,7 +354,8 @@ mod tests {
 
     #[test]
     fn test_hard_deviations_13() {
-        let rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         assert_eq!(
             hard_totals_chart(&vec![10, 3], 2, 30, -1, &rules),
@@ -361,7 +365,8 @@ mod tests {
 
     #[test]
     fn test_hard_deviations_10() {
-        let mut rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         assert_eq!(
             hard_totals_chart(&vec![7, 3], 10, 30, 4, &rules),
@@ -373,7 +378,7 @@ mod tests {
             Some(Decision::Double)
         );
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         assert_eq!(
             hard_totals_chart(&vec![7, 3], 11, 30, 4, &rules),
@@ -383,7 +388,8 @@ mod tests {
 
     #[test]
     fn test_hard_deviations_9() {
-        let rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         // before
         assert_eq!(
@@ -410,7 +416,8 @@ mod tests {
 
     #[test]
     fn test_hard_deviations_8() {
-        let rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         // before
         assert_eq!(
@@ -437,7 +444,8 @@ mod tests {
 
     #[test]
     fn test_hard_deviations_16() {
-        let mut rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         // before
         assert_eq!(
@@ -467,7 +475,7 @@ mod tests {
             Some(Decision::Hit)
         );
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         assert_eq!(
             hard_totals_chart(&vec![10, 6], 11, 20, 3, &rules),
@@ -479,7 +487,7 @@ mod tests {
             Some(Decision::Hit)
         );
 
-        rules.game_type = GameType::Hit17;
+        rules.set_game_type(GameType::Hit17);
 
         assert_eq!(
             hard_totals_chart(&vec![10, 6], 11, 20, 3, &rules),
@@ -489,7 +497,8 @@ mod tests {
 
     #[test]
     fn test_hard_deviations_15() {
-        let mut rules = Rules::default().enable_deviations(true);
+        let mut rules = Rules::default();
+        rules.set_enable_deviations(true);
 
         // before
         assert_eq!(
@@ -513,7 +522,7 @@ mod tests {
             Some(Decision::Stand)
         );
 
-        rules.game_type = GameType::Stand17;
+        rules.set_game_type(GameType::Stand17);
 
         assert_eq!(
             hard_totals_chart(&vec![10, 3, 2], 11, 30, 9, &rules),
