@@ -158,6 +158,7 @@ pub enum OtherPlayersPlayType {
     #[default]
     PerfectBasicStrategy,
     Random,
+    NoBustStrategy,
 }
 
 #[derive(Clone, Debug)]
