@@ -32,7 +32,7 @@ pub fn soft_totals_chart(
     // A8
     if total == 19 {
         if cards_in_hand.len() == 2 {
-            if rules.enable_deviations() {
+            if rules.enable_deviations() > 0 {
                 match rules.game_type() {
                     GameType::Hit17 if running_count < 0 && dealer_up_card == 6 => {
                         return Some(Decision::Stand);
@@ -52,8 +52,8 @@ pub fn soft_totals_chart(
             }
 
             if (dealer_up_card == 6
-                || (true_count >= 3 && dealer_up_card == 4 && rules.enable_deviations())
-                || (true_count >= 1 && dealer_up_card == 5 && rules.enable_deviations()))
+                || (true_count >= 3 && dealer_up_card == 4 && rules.enable_deviations() > 0)
+                || (true_count >= 1 && dealer_up_card == 5 && rules.enable_deviations() > 0))
                 && rules.is_double_allowed().any()
             {
                 return Some(Decision::Double);
@@ -82,7 +82,7 @@ pub fn soft_totals_chart(
     if total == 17 {
         if rules.is_double_allowed().any()
             && ((dealer_up_card >= 3 && dealer_up_card <= 6)
-                || (dealer_up_card == 2 && true_count >= 1 && rules.enable_deviations()))
+                || (dealer_up_card == 2 && true_count >= 1 && rules.enable_deviations() > 0))
             && cards_in_hand.len() == 2
         {
             return Some(Decision::Double);
@@ -122,6 +122,8 @@ pub fn soft_totals_chart(
 
 #[cfg(test)]
 mod tests {
+    use crate::types::Deviations;
+
     use super::*;
 
     #[test]
@@ -328,7 +330,7 @@ mod tests {
     #[test]
     fn soft_totals_a6_deviation() {
         let mut rules = Rules::default();
-        rules.set_enable_deviations(true);
+        rules.set_enable_deviations(Deviations::Standard);
 
         // without deviation
         assert_eq!(
@@ -345,7 +347,7 @@ mod tests {
     #[test]
     fn soft_totals_a8_v_6_deviation() {
         let mut rules = Rules::default();
-        rules.set_enable_deviations(true);
+        rules.set_enable_deviations(Deviations::Standard);
 
         // without deviation
         assert_eq!(
@@ -374,7 +376,7 @@ mod tests {
     #[test]
     fn soft_totals_a8_v_5_deviation() {
         let mut rules = Rules::default();
-        rules.set_enable_deviations(true);
+        rules.set_enable_deviations(Deviations::Standard);
 
         // before
         assert_eq!(
@@ -391,7 +393,7 @@ mod tests {
     #[test]
     fn soft_totals_a8_v_4_deviation() {
         let mut rules = Rules::default();
-        rules.set_enable_deviations(true);
+        rules.set_enable_deviations(Deviations::Standard);
 
         // before
         assert_eq!(
@@ -501,7 +503,7 @@ mod tests {
             Some(Decision::Stand)
         );
 
-        rules.set_enable_deviations(true);
+        rules.set_enable_deviations(Deviations::Standard);
 
         assert_eq!(
             soft_totals_chart(&vec![11, 8], 6, -1, 0, &rules),

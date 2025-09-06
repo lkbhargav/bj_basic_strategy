@@ -1,3 +1,5 @@
+use std::default;
+
 use proc_macros::{Random, ValueAssigner};
 use rand::seq::IndexedRandom;
 use serde::{Deserialize, Serialize};
@@ -127,6 +129,37 @@ impl DeckPen {
     }
 }
 
+#[derive(Clone, Debug, Default, Random, ValueAssigner)]
+pub enum Deviations {
+    #[default]
+    None,
+    Standard,
+    Extended1,
+    Extended2,
+    Extended3,
+    Extended4,
+}
+
+impl Deviations {
+    fn get_val(&self) -> u8 {
+        match &self {
+            Deviations::None => 0,
+            Deviations::Standard => 1,
+            Deviations::Extended1 => 2,
+            Deviations::Extended2 => 3,
+            Deviations::Extended3 => 4,
+            Deviations::Extended4 => 5,
+        }
+    }
+}
+
+#[derive(Clone, Copy, Debug, Default, Random, ValueAssigner)]
+pub enum OtherPlayersPlayType {
+    #[default]
+    PerfectBasicStrategy,
+    Random,
+}
+
 #[derive(Clone, Debug)]
 pub struct Rules {
     game_type: GameType,
@@ -139,9 +172,9 @@ pub struct Rules {
     max_splits_allowed: u8,
     deck_pen: DeckPen,
     number_of_other_players: u8,
-    enable_deviations: bool,
+    enable_deviations: Deviations,
     play_variation: PlayVariation,
-    do_other_players_play_perfect_strategy: bool,
+    do_other_players_play_perfect_strategy: OtherPlayersPlayType,
 }
 
 impl Default for Rules {
@@ -157,9 +190,9 @@ impl Default for Rules {
             max_splits_allowed: 3,
             deck_pen: DeckPen::default(),
             number_of_other_players: 1,
-            enable_deviations: false,
+            enable_deviations: Default::default(),
             play_variation: Default::default(),
-            do_other_players_play_perfect_strategy: false,
+            do_other_players_play_perfect_strategy: Default::default(),
         }
     }
 }
@@ -206,22 +239,22 @@ impl Rules {
         self.number_of_other_players
     }
 
-    pub fn enable_deviations(&self) -> bool {
-        self.enable_deviations
+    pub fn enable_deviations(&self) -> u8 {
+        self.enable_deviations.get_val()
     }
 
     pub fn play_variation(&self) -> &PlayVariation {
         &self.play_variation
     }
 
-    pub fn do_other_players_play_perfect_strategy(&self) -> bool {
+    pub fn do_other_players_play_perfect_strategy(&self) -> OtherPlayersPlayType {
         self.do_other_players_play_perfect_strategy
     }
 }
 
 // setters
 impl Rules {
-    pub fn set_enable_deviations(&mut self, value: bool) {
+    pub fn set_enable_deviations(&mut self, value: Deviations) {
         self.enable_deviations = value;
     }
 
@@ -241,9 +274,9 @@ pub struct RulesBuilder {
     max_splits_allowed: u8,
     deck_pen: DeckPen,
     number_of_other_players: u8,
-    enable_deviations: bool,
+    enable_deviations: Deviations,
     play_variation: PlayVariation,
-    do_other_players_play_perfect_strategy: bool,
+    do_other_players_play_perfect_strategy: OtherPlayersPlayType,
 }
 
 impl RulesBuilder {
@@ -259,9 +292,9 @@ impl RulesBuilder {
             max_splits_allowed: 3,
             deck_pen: DeckPen::default(),
             number_of_other_players: 1,
-            enable_deviations: false,
+            enable_deviations: Deviations::None,
             play_variation: PlayVariation::default(),
-            do_other_players_play_perfect_strategy: false,
+            do_other_players_play_perfect_strategy: Default::default(),
         }
     }
 
@@ -318,7 +351,7 @@ impl RulesBuilder {
         self
     }
 
-    pub fn enable_deviations(mut self, val: bool) -> Self {
+    pub fn enable_deviations(mut self, val: Deviations) -> Self {
         self.enable_deviations = val;
         self
     }
@@ -328,7 +361,7 @@ impl RulesBuilder {
         self
     }
 
-    pub fn do_other_players_play_perfect_strategy(mut self, value: bool) -> Self {
+    pub fn do_other_players_play_perfect_strategy(mut self, value: OtherPlayersPlayType) -> Self {
         self.do_other_players_play_perfect_strategy = value;
         self
     }

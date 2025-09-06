@@ -2,7 +2,7 @@ use crate::types::Rules;
 
 // * Returned decision should be used for both insurance and even money
 pub fn should_i_take_insurance(dealer_up_card: u8, true_count: isize, rules: &Rules) -> bool {
-    if !rules.enable_deviations() {
+    if rules.enable_deviations() == 0 {
         return false;
     }
 
@@ -11,12 +11,14 @@ pub fn should_i_take_insurance(dealer_up_card: u8, true_count: isize, rules: &Ru
 
 #[cfg(test)]
 mod tests {
+    use crate::types::Deviations;
+
     use super::*;
 
     #[test]
     fn should_take_insurance() {
         let mut rules = Rules::default();
-        rules.set_enable_deviations(true);
+        rules.set_enable_deviations(Deviations::Standard);
 
         assert!(should_i_take_insurance(11, 3, &rules));
         assert!(should_i_take_insurance(11, 5, &rules));
@@ -26,7 +28,7 @@ mod tests {
     #[test]
     fn should_not_take_insurance() {
         let mut rules = Rules::default();
-        rules.set_enable_deviations(true);
+        rules.set_enable_deviations(Deviations::Standard);
 
         assert!(!should_i_take_insurance(11, 1, &rules));
         assert!(!should_i_take_insurance(11, 2, &rules));
@@ -38,7 +40,7 @@ mod tests {
     #[test]
     fn disbaled_deviations() {
         let mut rules = Rules::default();
-        rules.set_enable_deviations(false);
+        rules.set_enable_deviations(Deviations::None);
 
         assert!(!should_i_take_insurance(11, 3, &rules));
         assert!(!should_i_take_insurance(11, 5, &rules));
