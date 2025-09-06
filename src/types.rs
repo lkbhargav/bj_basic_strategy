@@ -153,7 +153,7 @@ impl Deviations {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default, Random, ValueAssigner)]
+#[derive(Clone, Copy, Debug, Default, Random, Eq, PartialEq, ValueAssigner)]
 pub enum OtherPlayersPlayType {
     #[default]
     PerfectBasicStrategy,
