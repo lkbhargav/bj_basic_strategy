@@ -9,4 +9,4 @@ wasm-bindgen = "0.2.100"
 proc_macros = { git = "https://github.com/lkbhargav/proc_macros.git", rev = "127027c4bdec2b130f7c3dc58a0814c86fa564ef" }
 syn = "2.0.101"
 rand = "0.9.0"
-getrandom = { version = "0.3.1", features = ["js"] }
+getrandom = { version = "0.3", features = ["wasm_js", "js"] }
