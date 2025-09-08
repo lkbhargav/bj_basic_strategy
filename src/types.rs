@@ -1,5 +1,3 @@
-use std::default;
-
 use proc_macros::{Random, ValueAssigner};
 use rand::seq::IndexedRandom;
 use serde::{Deserialize, Serialize};
@@ -264,6 +262,7 @@ impl Rules {
     }
 }
 
+#[derive(Clone, Debug)]
 pub struct RulesBuilder {
     game_type: Option<GameType>,
     double_after_split: bool,
