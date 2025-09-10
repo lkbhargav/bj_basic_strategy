@@ -264,7 +264,7 @@ impl Rules {
 
 #[derive(Clone, Debug)]
 pub struct RulesBuilder {
-    game_type: Option<GameType>,
+    game_type: GameType,
     double_after_split: bool,
     split_aces: SplitAces,
     surrender: bool,
@@ -282,8 +282,8 @@ pub struct RulesBuilder {
 impl RulesBuilder {
     pub fn new() -> Self {
         Self {
-            game_type: None,
-            double_after_split: false,
+            game_type: GameType::Hit17,
+            double_after_split: true,
             split_aces: SplitAces::default(),
             surrender: false,
             decks: 6,
@@ -299,7 +299,7 @@ impl RulesBuilder {
     }
 
     pub fn game_type(mut self, game_type: GameType) -> Self {
-        self.game_type = Some(game_type);
+        self.game_type = game_type;
         self
     }
 
@@ -366,9 +366,9 @@ impl RulesBuilder {
         self
     }
 
-    pub fn build(self) -> Result<Rules, &'static str> {
-        Ok(Rules {
-            game_type: self.game_type.ok_or("game_type is required")?,
+    pub fn build(self) -> Rules {
+        Rules {
+            game_type: self.game_type,
             double_after_split: self.double_after_split,
             split_aces: self.split_aces,
             surrender: self.surrender,
@@ -381,7 +381,7 @@ impl RulesBuilder {
             enable_deviations: self.enable_deviations,
             play_variation: self.play_variation,
             do_other_players_play_perfect_strategy: self.do_other_players_play_perfect_strategy,
-        })
+        }
     }
 }
 
