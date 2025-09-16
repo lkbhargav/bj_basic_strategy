@@ -6,7 +6,7 @@ pub fn should_i_split(
     true_count: isize,
     rules: &Rules,
 ) -> bool {
-    if cards_in_hand.len() < 2 || cards_in_hand.len() > 2 || cards_in_hand[0] != cards_in_hand[1] {
+    if cards_in_hand.len() != 2 || cards_in_hand[0] != cards_in_hand[1] {
         return false;
     }
 

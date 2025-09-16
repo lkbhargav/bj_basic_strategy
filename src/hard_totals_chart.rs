@@ -10,8 +10,12 @@ pub fn hard_totals_chart(
     true_count: isize,
     rules: &Rules,
 ) -> Option<Decision> {
-    if cards_in_hand.len() == 0 && cards_in_hand[0] == cards_in_hand[1] && cards_in_hand[0] != 5 {
-        return None;
+    // Only handle certain pairs in hard totals chart (5s always double, 4s have specific logic)
+    if cards_in_hand.len() == 2 && cards_in_hand[0] == cards_in_hand[1] {
+        // Let pairs of 5s and certain other pairs be handled by hard totals
+        if cards_in_hand[0] != 5 && cards_in_hand[0] != 4 {
+            return None;
+        }
     }
 
     let mut tmp = cards_in_hand.clone();

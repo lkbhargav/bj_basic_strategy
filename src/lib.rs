@@ -6,48 +6,47 @@ pub mod surrender;
 pub mod types;
 
 pub fn compute_hand(cards: &mut Vec<u8>) -> (u8, bool) {
-    let total = cards.iter().sum::<u8>();
-
-    if cards.len() == 2 && total == 21 {
-        return (21, true);
-    }
-
-    if total > 21 && !cards.contains(&11) {
-        return (total, false);
-    }
-
-    if cards.contains(&10) && cards.contains(&11) {
-        for elem in &mut *cards {
-            if *elem == 11 {
-                *elem = 1;
-            }
+    // Check for blackjack first (natural 21)
+    if cards.len() == 2 {
+        let total = cards.iter().sum::<u8>();
+        if total == 21 {
+            return (21, true);
         }
     }
 
-    let mut contains_a_11 = false;
+    // Count aces and calculate total with all aces as 1
+    let mut ace_count = 0;
+    let mut total = 0;
 
-    if !cards.contains(&10) && cards.contains(&11) {
-        for elem in &mut *cards {
-            if *elem == 11 {
-                if contains_a_11 {
-                    *elem = 1;
-                    continue;
+    for &card in cards.iter() {
+        if card == 11 {
+            ace_count += 1;
+            total += 1; // Count ace as 1 initially
+        } else {
+            total += card;
+        }
+    }
+
+    // Try to use one ace as 11 if it doesn't bust
+    if ace_count > 0 && total + 10 <= 21 {
+        total += 10; // Convert one ace from 1 to 11
+
+        // Update the cards vector to reflect this
+        let mut aces_converted = 0;
+        for card in cards.iter_mut() {
+            if *card == 11 {
+                if aces_converted == 0 {
+                    *card = 11; // Keep one ace as 11
+                    aces_converted += 1;
+                } else {
+                    *card = 1; // Convert remaining aces to 1
                 }
-
-                contains_a_11 = true;
-                *elem = 11;
             }
         }
-    }
-
-    let mut total = cards.iter().sum();
-
-    // if total goes over 21 and if it contains a 11, then adjust the return
-    if contains_a_11 && total > 21 {
-        total = total - 10;
-
-        for card in cards {
-            if card == &11 {
+    } else {
+        // Convert all aces to 1 in the cards vector
+        for card in cards.iter_mut() {
+            if *card == 11 {
                 *card = 1;
             }
         }

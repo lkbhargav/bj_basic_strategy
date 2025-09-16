@@ -27,12 +27,13 @@ pub fn should_i_surrender(
 
     if total == 16 {
         if dealer_up_card == 9 || dealer_up_card == 10 || dealer_up_card == 11 {
-            if ((dealer_up_card == 10 && cards_in_hand[0] == cards_in_hand[1] && true_count < 1)
-                || (dealer_up_card == 9 && true_count <= -1)
-                || (dealer_up_card == 9 && cards_in_hand[0] == cards_in_hand[1]))
-                && rules.enable_deviations() > 0
-            {
-                return false;
+            if rules.enable_deviations() > 0 {
+                if (dealer_up_card == 10 && cards_in_hand[0] == cards_in_hand[1] && true_count < 1)
+                    || (dealer_up_card == 9 && true_count <= -1)
+                    || (dealer_up_card == 9 && cards_in_hand[0] == cards_in_hand[1])
+                {
+                    return false;
+                }
             }
 
             if dealer_up_card == 11 {
