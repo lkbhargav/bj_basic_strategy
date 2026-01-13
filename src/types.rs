@@ -99,17 +99,19 @@ impl PlayVariation {
     }
 }
 
-#[derive(Clone, Debug, Default, Random, ValueAssigner)]
+/// custom expects deck pen in decimal. Example: 0.5 means deck (26 cards)
+#[derive(Clone, Debug, Default)]
 pub enum DeckPen {
-    Quater = 13,
-    Half = 26,
-    ThreeFourth = 39,
+    Quater,
+    Half,
+    ThreeFourth,
     #[default]
-    One = 52,
-    OneQuater = 65,
-    OneAndHalf = 78,
-    OneThreeFourth = 91,
-    Two = 104,
+    One,
+    OneQuater,
+    OneAndHalf,
+    OneThreeFourth,
+    Two,
+    Custom(f32),
 }
 
 impl DeckPen {
@@ -123,6 +125,7 @@ impl DeckPen {
             DeckPen::OneAndHalf => 78,
             DeckPen::OneThreeFourth => 91,
             DeckPen::Two => 104,
+            DeckPen::Custom(v) => (*v * 52f32) as usize,
         }
     }
 }
