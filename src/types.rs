@@ -1,7 +1,6 @@
 use proc_macros::{Random, ValueAssigner};
 use rand::seq::IndexedRandom;
 use serde::{Deserialize, Serialize};
-use wasm_bindgen::prelude::wasm_bindgen;
 
 #[derive(Clone, Debug, Default, PartialEq, Random, ValueAssigner)]
 pub enum GameType {
@@ -390,8 +389,7 @@ impl RulesBuilder {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default, Random, ValueAssigner)]
-#[wasm_bindgen]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub enum Decision {
     #[default]
     Stand,
@@ -399,8 +397,7 @@ pub enum Decision {
     Split,
     Double,
     Surrender,
-    GotBJ,
-    GotSuitedBJ
+    GotBJ{suited: bool},
 }
 
 impl Copy for Decision {}
