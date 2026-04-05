@@ -397,7 +397,7 @@ pub enum Decision {
     Split,
     Double,
     Surrender,
-    GotBJ{suited: bool},
+    GotBJ,
 }
 
 impl Copy for Decision {}
