@@ -65,7 +65,7 @@ pub fn should_i_surrender(
 
     if total == 15 {
         if dealer_up_card == 10 {
-            if running_count < 0 {
+            if running_count < 0 && rules.enable_deviations() {
                 return false;
             }
 
