@@ -22,8 +22,6 @@ pub enum BlackjackPayout {
     #[default]
     ThreeToTwo,
     SixToFive,
-    SixToFiveSuitedTwoToOne,
-    TwoToOne,
     Even,
 }
 
